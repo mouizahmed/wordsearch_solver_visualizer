@@ -1,6 +1,9 @@
 import random
 import string
 import sys
+from trie import Trie
+from termcolor import colored
+
 
 def create_word_search(words, size):
     grid = [['_' for i in range(size)] for j in range(size)]
@@ -113,6 +116,39 @@ def random_letters(grid, size):
     return grid
 
 
+def check(grid, trie, i, j, i_direction, j_direction, word_vectors, size):
+    i_start = i
+    j_start = j
+    substring = ''
+
+    while 0 <= i < size and 0 <= j < size and grid[i][j] in trie.children:
+        substring += grid[i][j]
+        trie = trie.children[grid[i][j]]
+
+        if trie.is_end:
+            word_vectors.append(((i_start, j_start), (i, j)))
+            trie.delete(substring)
+
+        i += i_direction
+        j += j_direction        
+
+
+def solve(grid, words, size):
+    word_vectors = []
+    trie = Trie().build(words)
+    directions = [ (0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1) ]    
+
+
+    for i in range(size):
+        for j in range(size):
+            if grid[i][j] in trie.children:
+                for i_direction, j_direction in directions:
+                    check(grid, trie, i, j, i_direction, j_direction, word_vectors, size)
+
+    #print(word_vectors)
+
+    return word_vectors
+
 
 def main():
     args = sys.argv[1:]
@@ -120,9 +156,22 @@ def main():
     size = int(args[0])
 
     grid2 = random_letters(create_word_search(args[1:], size), size)
+    word_vectors = solve(grid2, args[1:], size)
+    print(word_vectors)
+    print(word_vectors[0][0][0])
+    # for row in grid2:
+    #     print(' '.join(row))
 
-    for row in grid2:
-        print(' '.join(row))
+    for i, row in enumerate(grid2):
+        for j, col in enumerate(row):
+            
+            
+            print(col, end = " ")
+
+        print()
+
+
+    print(colored("hello", "red"))
 
 if __name__ == "__main__":
     main()
