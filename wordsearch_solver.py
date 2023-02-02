@@ -1,5 +1,6 @@
 import random
 import string
+import sys
 
 def create_word_search(words, size):
     grid = [['_' for i in range(size)] for j in range(size)]
@@ -95,7 +96,7 @@ def create_word_search(words, size):
                             break
                     else:
                         for i, letter in enumerate(word):
-                            grid[starting_row-i][starting_col+i] = letter
+                            grid[starting_row-i][starting_col-i] = letter
                         placed = True
                     # for loop iterates over all letters in word to check if it collides with any other word. If not, it will execute the else statement after iterating through all the letters. If it does, it will not execute the else statement.
 
@@ -108,16 +109,22 @@ def random_letters(grid, size):
         for j in range(size):
             if grid[i][j] == '_':
                 grid[i][j] = random.choice(string.ascii_uppercase)
-                
+
     return grid
 
 
 
+def main():
+    args = sys.argv[1:]
+    print(args)
+    size = int(args[0])
 
-grid1 = create_word_search(["TEST", "RANDOM"], 10)
-grid2 = random_letters(grid1, 10)
+    grid2 = random_letters(create_word_search(args[1:], size), size)
 
-for row in grid2:
-    print(' '.join(row))
+    for row in grid2:
+        print(' '.join(row))
 
-#print(random.choice(string.ascii_uppercase))
+if __name__ == "__main__":
+    main()
+
+
