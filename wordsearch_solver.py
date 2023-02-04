@@ -124,9 +124,30 @@ def check(grid, trie, i, j, i_direction, j_direction, word_vectors, size):
     while 0 <= i < size and 0 <= j < size and grid[i][j] in trie.children:
         substring += grid[i][j]
         trie = trie.children[grid[i][j]]
+        positions = []
+        positions.append((i, j))
+        mySet = set(positions)
+        #print(positions)
+
 
         if trie.is_end:
-            word_vectors.append(((i_start, j_start), (i, j)))
+            
+            #word_vectors.append((i_start, j_start))
+
+            #print("fff", len(substring))
+            last_position = (i, j)
+            
+            i_start_temp = i_start
+            j_start_temp = j_start
+          
+
+            while i_start_temp != i or j_start_temp != j:
+                word_vectors.append((i_start_temp, j_start_temp))
+                i_start_temp += i_direction
+                j_start_temp += j_direction
+                #print(word_vectors)
+            word_vectors.append((i, j))
+            #word_vectors.append(((i_start, j_start), (i, j)))
             trie.delete(substring)
 
         i += i_direction
@@ -158,15 +179,26 @@ def main():
     grid2 = random_letters(create_word_search(args[1:], size), size)
     word_vectors = solve(grid2, args[1:], size)
     print(word_vectors)
-    print(word_vectors[0][0][0])
-    # for row in grid2:
-    #     print(' '.join(row))
+    #print(word_vectors[0][0][0])
+
 
     for i, row in enumerate(grid2):
         for j, col in enumerate(row):
+            color = None
+            for letter in word_vectors:
+                # x_dir = last_letter[1] - first_letter[1]
+                # y_dir = last_letter[0] - first_letter[0] 
+                
+                if (i, j) == letter:
+                    color = 'green'
+                    break
+                    #print("yes")
+                
+                # if (i, j) in positions:
+                #     color = 'green'
+                #     break
             
-            
-            print(col, end = " ")
+            print(colored(col, color), end = " ")
 
         print()
 
